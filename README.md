@@ -1,1 +1,0 @@
-# advanced-page-visit-counter
