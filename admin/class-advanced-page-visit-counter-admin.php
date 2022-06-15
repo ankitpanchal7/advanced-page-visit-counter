@@ -2008,7 +2008,11 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
             die( 'Permission Denied.' );
         }
         $history_table = $wpdb->prefix . 'avc_page_visit_history';
+<<<<<<< HEAD
         $art_id = esc_sql( sanitize_text_field( $_REQUEST['artID'] ) );
+=======
+        $art_id = sanitize_text_field( $_REQUEST['artID'] );
+>>>>>>> ff49af8905353f1b8aef90b3a2c57e7c72fbd7d7
         
         if ( $wpdb->query( "DELETE FROM {$history_table} WHERE article_id={$art_id}" ) ) {
             echo  wp_send_json_success( 'success' ) ;
@@ -2024,7 +2028,11 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
         if ( !wp_verify_nonce( $_POST['security'], 'security_nonce' ) ) {
             die( 'Permission Denied.' );
         }
+<<<<<<< HEAD
         $art_id = esc_sql( sanitize_text_field( $_REQUEST['artID'] ) );
+=======
+        $art_id = sanitize_text_field( $_REQUEST['artID'] );
+>>>>>>> ff49af8905353f1b8aef90b3a2c57e7c72fbd7d7
         $active = get_post_meta( $art_id, 'apvc_active_counter', true );
         $base_count = get_post_meta( $art_id, 'count_start_from', true );
         $widget_label = get_post_meta( $art_id, 'widget_label', true );

@@ -70,7 +70,11 @@ class Advanced_Visit_Counter_Activator
             dbDelta( $sql );
         }
         
+<<<<<<< HEAD
         update_option( 'apvc_version', '6.1.5' );
+=======
+        update_option( 'apvc_version', '6.1.4' );
+>>>>>>> ff49af8905353f1b8aef90b3a2c57e7c72fbd7d7
         delete_option( 'apvc_newsletter' );
         delete_option( 'avc_config' );
         update_option( 'apvc_notice', 'no' );

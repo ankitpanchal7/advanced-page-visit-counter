@@ -714,12 +714,19 @@ class Advanced_Visit_Counter_Public
         return '<div class="' . $class . '" {inline_style}><div>{current_visits_label}{current_visits_counts}</div><div>{today_visits_label}{today_visits_counts}</div><div>{total_visits_label}{total_visits_counts}</div></div>';
     }
     
+<<<<<<< HEAD
+=======
+    /* THIS IS SHORTCODE METHOD*/
+>>>>>>> ff49af8905353f1b8aef90b3a2c57e7c72fbd7d7
     public function public_avc_visit_counter( $atts = array(), $content = null, $tag = '' )
     {
         global  $wpdb ;
         $tbl_history = APVC_DATA_TABLE;
         $atts = array_change_key_case( (array) $atts, CASE_LOWER );
+<<<<<<< HEAD
         $s_html = '';
+=======
+>>>>>>> ff49af8905353f1b8aef90b3a2c57e7c72fbd7d7
         if ( $atts['current'] == 'false' && $atts['today'] == 'false' && $atts['global'] == 'false' ) {
             return false;
         }
@@ -832,9 +839,15 @@ class Advanced_Visit_Counter_Public
             $shortcodeData = json_decode( $this->apvc_get_shortcodes( $wid_templated ) );
             
             if ( $shortcodeData->icon == 'yes' ) {
+<<<<<<< HEAD
                 $s_html = $this->apvc_get_html_with_icon( $wid_templated );
             } else {
                 $s_html = $this->apvc_get_html_without_icon( $wid_templated );
+=======
+                $shHTML = $this->apvc_get_html_with_icon( $wid_templated );
+            } else {
+                $shHTML = $this->apvc_get_html_without_icon( $wid_templated );
+>>>>>>> ff49af8905353f1b8aef90b3a2c57e7c72fbd7d7
             }
             
             $crReplace = '<div>{current_visits_label}{current_visits_counts}</div>';
@@ -843,20 +856,33 @@ class Advanced_Visit_Counter_Public
             $iconCR = $iconGL = $iconTD = '';
             
             if ( !empty($pageCnt) ) {
+<<<<<<< HEAD
                 $s_html = str_replace( $crReplace, '<div>' . $pageCnt . '</div>', $s_html );
             } else {
                 $s_html = str_replace( $crReplace, '', $s_html );
+=======
+                $shHTML = str_replace( $crReplace, '<div>' . $pageCnt . '</div>', $shHTML );
+            } else {
+                $shHTML = str_replace( $crReplace, '', $shHTML );
+>>>>>>> ff49af8905353f1b8aef90b3a2c57e7c72fbd7d7
             }
             
             
             if ( !empty($todaysCount) ) {
+<<<<<<< HEAD
                 $s_html = str_replace( $tdReplace, '<div>' . $todaysCount . '</div>', $s_html );
             } else {
                 $s_html = str_replace( $tdReplace, '', $s_html );
+=======
+                $shHTML = str_replace( $tdReplace, '<div>' . $todaysCount . '</div>', $shHTML );
+            } else {
+                $shHTML = str_replace( $tdReplace, '', $shHTML );
+>>>>>>> ff49af8905353f1b8aef90b3a2c57e7c72fbd7d7
             }
             
             
             if ( !empty($allTimeCount) ) {
+<<<<<<< HEAD
                 $s_html = str_replace( $glReplace, '<div>' . $allTimeCount . '</div>', $s_html );
             } else {
                 $s_html = str_replace( $glReplace, '', $s_html );
@@ -864,11 +890,24 @@ class Advanced_Visit_Counter_Public
             
             $s_html = str_replace( '{inline_style}', 'style="' . $shWidth . $padding . '; margin-bottom :15px;"', $s_html );
             $s_html = '<style type="text/css">' . $shortcodeData->css . '</style>' . $s_html;
+=======
+                $shHTML = str_replace( $glReplace, '<div>' . $allTimeCount . '</div>', $shHTML );
+            } else {
+                $shHTML = str_replace( $glReplace, '', $shHTML );
+            }
+            
+            $shHTML = str_replace( '{inline_style}', 'style="' . $shWidth . $padding . '; margin-bottom :15px;"', $shHTML );
+            $shHTML = '<style type="text/css">' . $shortcodeData->css . '</style>' . $shHTML;
+>>>>>>> ff49af8905353f1b8aef90b3a2c57e7c72fbd7d7
         } else {
             $html = "<div class='avc_visit_counter_front' style='" . $borderCSS . $bgColor . $borderRadius . $font_size . $font_style . $font_color . '' . $shWidth . '' . $padding . "'>" . $pageCnt . ' ' . $todaysCount . ' ' . $allTimeCount . '</div>';
         }
         
+<<<<<<< HEAD
         return $s_html . $html;
+=======
+        return $shHTML . $html;
+>>>>>>> ff49af8905353f1b8aef90b3a2c57e7c72fbd7d7
     }
     
     public function public_add_counter_to_content( $content )
@@ -974,9 +1013,15 @@ class Advanced_Visit_Counter_Public
                 $shortcodeData = json_decode( $this->apvc_get_shortcodes( $wid_templated ) );
                 
                 if ( $shortcodeData->icon == 'yes' ) {
+<<<<<<< HEAD
                     $s_html = $this->apvc_get_html_with_icon( $wid_templated );
                 } else {
                     $s_html = $this->apvc_get_html_without_icon( $wid_templated );
+=======
+                    $shHTML = $this->apvc_get_html_with_icon( $wid_templated );
+                } else {
+                    $shHTML = $this->apvc_get_html_without_icon( $wid_templated );
+>>>>>>> ff49af8905353f1b8aef90b3a2c57e7c72fbd7d7
                 }
                 
                 $crReplace = '<div>{current_visits_label}{current_visits_counts}</div>';
@@ -985,20 +1030,33 @@ class Advanced_Visit_Counter_Public
                 $iconCR = $iconGL = $iconTD = '';
                 
                 if ( $avcConfig->apvc_atc_page_count[0] !== 'on' ) {
+<<<<<<< HEAD
                     $s_html = str_replace( $crReplace, '', $s_html );
                 } else {
                     $s_html = str_replace( $crReplace, '<div>' . $pageCnt . '</div>', $s_html );
+=======
+                    $shHTML = str_replace( $crReplace, '', $shHTML );
+                } else {
+                    $shHTML = str_replace( $crReplace, '<div>' . $pageCnt . '</div>', $shHTML );
+>>>>>>> ff49af8905353f1b8aef90b3a2c57e7c72fbd7d7
                 }
                 
                 
                 if ( $avcConfig->apvc_show_today_count[0] !== 'on' ) {
+<<<<<<< HEAD
                     $s_html = str_replace( $tdReplace, '', $s_html );
                 } else {
                     $s_html = str_replace( $tdReplace, '<div>' . $todaysCount . '</div>', $s_html );
+=======
+                    $shHTML = str_replace( $tdReplace, '', $shHTML );
+                } else {
+                    $shHTML = str_replace( $tdReplace, '<div>' . $todaysCount . '</div>', $shHTML );
+>>>>>>> ff49af8905353f1b8aef90b3a2c57e7c72fbd7d7
                 }
                 
                 
                 if ( $avcConfig->apvc_show_global_count[0] !== 'on' ) {
+<<<<<<< HEAD
                     $s_html = str_replace( $glReplace, '', $s_html );
                 } else {
                     $s_html = str_replace( $glReplace, '<div>' . $allTimeCount . '</div>', $s_html );
@@ -1006,6 +1064,15 @@ class Advanced_Visit_Counter_Public
                 
                 $s_html = str_replace( '{inline_style}', 'style="' . $widget_width . $padding . '' . $widAlignmentCss . '; margin-bottom :15px; color:' . $avcConfig->apvc_default_text_color[0] . '"', $s_html );
                 $s_html = '<style type="text/css">' . $shortcodeData->css . '</style>' . $s_html;
+=======
+                    $shHTML = str_replace( $glReplace, '', $shHTML );
+                } else {
+                    $shHTML = str_replace( $glReplace, '<div>' . $allTimeCount . '</div>', $shHTML );
+                }
+                
+                $shHTML = str_replace( '{inline_style}', 'style="' . $widget_width . $padding . '' . $widAlignmentCss . '; margin-bottom :15px; color:' . $avcConfig->apvc_default_text_color[0] . '"', $shHTML );
+                $shHTML = '<style type="text/css">' . $shortcodeData->css . '</style>' . $shHTML;
+>>>>>>> ff49af8905353f1b8aef90b3a2c57e7c72fbd7d7
             } else {
                 $ShortcodeHtml = "<div class='avc_visit_counter_front_simple' " . $style . '>' . $this->apvc_number_format( $pageCnt ) . ' ' . $this->apvc_number_format( $todaysCount ) . ' ' . $this->apvc_number_format( $allTimeCount ) . '</div>';
             }
@@ -1016,9 +1083,15 @@ class Advanced_Visit_Counter_Public
             } else {
                 
                 if ( $avcConfig->apvc_show_conter_on_front_side[0] == 'below_the_content' ) {
+<<<<<<< HEAD
                     return $content . $s_html . $ShortcodeHtml;
                 } elseif ( $avcConfig->apvc_show_conter_on_front_side[0] == 'above_the_content' ) {
                     return $s_html . $ShortcodeHtml . $content;
+=======
+                    return $content . $shHTML . $ShortcodeHtml;
+                } elseif ( $avcConfig->apvc_show_conter_on_front_side[0] == 'above_the_content' ) {
+                    return $shHTML . $ShortcodeHtml . $content;
+>>>>>>> ff49af8905353f1b8aef90b3a2c57e7c72fbd7d7
                 }
             
             }
