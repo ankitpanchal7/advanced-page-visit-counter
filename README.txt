@@ -1,10 +1,10 @@
 === Advanced Page Visit Counter – Advanced WordPress Visit Counter ===
-Plugin Name: Advanced Page Visit Counter – Advanced WordPress Visit Counter
+Plugin Name: Advanced Page Visit Counter
 Plugin URI: https://www.pagevisitcounter.com/
 Author: Page Visit Counter
-Author URI: https://www.pagevisitcounter.com/
+Author URI: https://iamankitpanchal.com/
 Contributors: ankitmaru
-Stable tag: 6.1.4
+Stable tag: 6.1.6
 Tags: page counter,page visit, post counter, post visit, wordpress post view, wordpress page view, page visit graph, post visit graph,
 Requires at least: 3.9
 Requires PHP: 5.6
@@ -100,7 +100,7 @@ OR you can just install it with WordPress Admin Panel by going to Plugins / Add 
 
 == Frequently Asked Questions ==
 
-= Is this plugin works with latest WordPress 6.0.0 versions? =
+= Is this plugin works with latest WordPress 5.8.0 versions? =
 Yes, It is compatible with latest WordPress versions 4.1+
 
 = Is it compatible with other 3rd party plugins and themes? =
@@ -278,3 +278,8 @@ Automatic updates should work extra ordinary for you. As usual, however, We sugg
 = 6.1.4. - 08.06.2022 =
 * Improvements and security updates.
 
+= 6.1.5. - 14.06.2022 =
+* Improvements and security updates related to artID sql injection.
+
+= 6.1.6. - 15.06.2022 =
+* Improvements and security updates related to artID sql injection.
