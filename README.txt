@@ -4,7 +4,7 @@ Plugin URI: https://www.pagevisitcounter.com/
 Author: Page Visit Counter
 Author URI: https://iamankitpanchal.com/
 Contributors: ankitmaru
-Stable tag: 6.1.5
+Stable tag: 6.1.6
 Tags: page counter,page visit, post counter, post visit, wordpress post view, wordpress page view, page visit graph, post visit graph,
 Requires at least: 3.9
 Requires PHP: 5.6
@@ -281,3 +281,5 @@ Automatic updates should work extra ordinary for you. As usual, however, We sugg
 = 6.1.5. - 14.06.2022 =
 * Improvements and security updates related to artID sql injection.
 
+= 6.1.6. - 15.06.2022 =
+* Improvements and security updates related to artID sql injection.
