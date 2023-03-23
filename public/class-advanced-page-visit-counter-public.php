@@ -1119,7 +1119,7 @@ class Advanced_Visit_Counter_Public
         if ( $op == 'Yes' ) {
             
             if ( $num > 1000 ) {
-                $x = round( $num );
+                $x = round( absint( $num ) );
                 $x_number_format = number_format( $x );
                 $x_array = explode( ',', $x_number_format );
                 $x_parts = array(

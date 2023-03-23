@@ -3,8 +3,8 @@ Plugin Name: Advanced Page Visit Counter
 Plugin URI: https://www.pagevisitcounter.com/
 Author: Page Visit Counter
 Author URI: https://www.pagevisitcounter.com/
-Contributors: ankitmaru
-Stable tag: 6.4.2
+Contributors: ankitmaru, freemius
+Stable tag: 6.4.2.2
 Tags: page counter,page visit, post counter, post visit, wordpress post view, wordpress page view, page visit graph, post visit graph,
 Requires at least: 3.9
 Requires PHP: 5.6
@@ -100,7 +100,7 @@ OR you can just install it with WordPress Admin Panel by going to Plugins / Add 
 
 == Frequently Asked Questions ==
 
-= Is this plugin works with latest WordPress 6.1.1 versions? =
+= Is this plugin works with latest WordPress 6.2 versions? =
 Yes, It is compatible with latest WordPress versions 4.1+
 
 = Is it compatible with other 3rd party plugins and themes? =
@@ -307,3 +307,9 @@ Automatic updates should work extra ordinary for you. As usual, however, We sugg
 
 = 6.4.2 - 23.03.2023 =
 * Fixes and improvements and fixes and freemius sdk updated.
+
+= 6.4.2.1 - 23.03.2023 =
+* Security fixes.
+
+= 6.4.2.2 - 23.03.2023 =
+* Security fixes.

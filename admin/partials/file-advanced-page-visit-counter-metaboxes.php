@@ -28,7 +28,12 @@ function get_alltimes_data_ind( $article_id ) {
 
 	$today = current_time( 'mysql' );
 
-	$allPages = $wpdb->get_results( "SELECT COUNT(*) AS count FROM {$tbl_history} WHERE article_id=$article_id" );
+	$allPages = $wpdb->get_results( 
+        $wpdb->prepare(
+            "SELECT COUNT(*) AS count FROM {$tbl_history} WHERE article_id=%d",
+            $article_id
+        ) 
+    );
 
 	return $allPages[0]->count;
 }
@@ -44,7 +49,12 @@ function get_todays_data_ind( $article_id ) {
 
 	$today = current_time( 'mysql' );
 
-	$allPages = $wpdb->get_results( "SELECT COUNT(*) as count FROM {$tbl_history} WHERE DATE(date) = CURDATE() AND article_id=$article_id" );
+    $allPages = $wpdb->get_results( 
+        $wpdb->prepare(
+            "SELECT COUNT(*) as count FROM {$tbl_history} WHERE DATE(date) = CURDATE() AND article_id=%d",
+            $article_id
+        ) 
+    );
 
 	return $allPages[0]->count;
 }
@@ -65,7 +75,14 @@ function get_weekly_data_ind( $article_id ) {
 	$start_week0 = date( "Y-m-d H:m:s", $start_week0 );
 	$end_week0   = date( "Y-m-d H:m:s", $end_week0 );
 
-	$allPages = $wpdb->get_results( "SELECT COUNT(*) as count FROM {$tbl_history} WHERE `date`>='$start_week0' AND `date`<='$end_week0' AND article_id=$article_id" );
+    $allPages = $wpdb->get_results( 
+        $wpdb->prepare(
+            "SELECT COUNT(*) as count FROM {$tbl_history} WHERE `date`>= %s AND `date`<= %s AND article_id=%d",
+            $start_week0,
+            $end_week0,
+            $article_id
+        ) 
+    );
 
 	$Week0         = [];
 	$Week0['week'] = date( "M-d", strtotime( $start_week0 ) ) . ' - ' . date( "M-d", strtotime( $end_week0 ) );
@@ -89,7 +106,14 @@ function get_monthly_data_ind( $article_id ) {
 	$start_Month0 = date( "Y-m-d", $start_Month0 );
 	$end_Month0   = date( "Y-m-d", $end_Month0 );
 
-	$allPages = $wpdb->get_results( "SELECT COUNT(*) as count FROM {$tbl_history} WHERE `date`>='$start_Month0' AND `date`<='$end_Month0' AND article_id=$article_id" );
+    $allPages = $wpdb->get_results( 
+        $wpdb->prepare(
+             "SELECT COUNT(*) as count FROM {$tbl_history} WHERE `date`>= %s AND `date`<=  %s AND article_id=%d",
+            $start_Month0,
+            $end_Month0,
+            $article_id
+        ) 
+    );
 
 	return $allPages[0]->count;
 }
