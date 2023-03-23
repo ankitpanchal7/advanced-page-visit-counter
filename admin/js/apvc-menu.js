@@ -23,6 +23,9 @@
 				jQuery( this ).attr( "href", "admin.php?page=apvc-dashboard-page&apvc_page=export_data" );
 			} else if (jQuery( this ).text() === 'Settings') {
 				jQuery( this ).attr( "href", "admin.php?page=apvc-dashboard-page&apvc_page=settings" );
+			} else if (jQuery( this ).text() === 'Contact Us') {
+				jQuery( this ).attr( "href", "https://pagevisitcounter.com/" );
+				jQuery( this ).attr( "target", "_blank" );
 			}
 		}
 	);

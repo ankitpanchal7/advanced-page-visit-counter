@@ -37,7 +37,7 @@ class Advanced_Visit_Counter_Activator
         $history_table = $wpdb->prefix . 'avc_page_visit_history';
         $exSettings = get_option( 'apvc_configurations' );
         
-        if ( count( $exSettings ) == 0 || empty($exSettings) ) {
+        if ( is_countable( $exSettings ) && count( $exSettings ) == 0 || empty($exSettings) ) {
             $apvc_config = array();
             $apvc_config['apvc_post_types'] = array( 'post', 'page' );
             $apvc_config['apvc_ip_address'] = array();
@@ -70,7 +70,7 @@ class Advanced_Visit_Counter_Activator
             dbDelta( $sql );
         }
         
-        update_option( 'apvc_version', '6.1.4' );
+        update_option( 'apvc_version', ADVANCED_PAGE_VISIT_COUNTER );
         delete_option( 'apvc_newsletter' );
         delete_option( 'avc_config' );
         update_option( 'apvc_notice', 'no' );

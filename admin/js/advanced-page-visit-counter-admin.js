@@ -334,7 +334,6 @@
 						security: apvc_ajax.security_nonce
 					},
 					success: function (response) {
-						console.log( response.success );
 						if (response.success == true) {
 							jQuery( ".setCntSaveBtn" ).text( "Saved.." );
 							jQuery( 'body' ).css( 'cursor', 'default' );
@@ -373,13 +372,23 @@
 		function (e) {
 			e.preventDefault();
 			var formData = jQuery( '#apvc_settings_form' ).serialize();
-			// console.log(formData);
+			var apvc_default_label = jQuery("#apvc_default_label").val();
+			var apvc_todays_label = jQuery("#apvc_todays_label").val();
+			var apvc_global_label = jQuery("#apvc_global_label").val();
+			var default_label = apvc_default_label;
+			var todays_label = apvc_todays_label;
+			var global_label = apvc_global_label;
+			var range_posts = jQuery("#apvc_exclude_counts").val();
+			var range_ip_add = jQuery("#apvc_ip_address").val();
+			var ex_show_counter = jQuery("#apvc_exclude_show_counter").val();
+
 			jQuery.ajax(
 				{
 					type: "post",
 					url: apvc_ajax.ajax_url,
-					data: {action: "apvc_save_settings", formData: formData, security: apvc_ajax.security_nonce},
+					data: {action: "apvc_save_settings", formData: formData, ex_show_counter:ex_show_counter, range_posts:range_posts, range_ip_add:range_ip_add, default_label: default_label, todays_label:todays_label, global_label:global_label, security: apvc_ajax.security_nonce},
 					success: function (response) {
+						console.log(response);
 						if (response == 'success') {
 							var url              = window.location.href + "&m=success";
 							window.location.href = url;

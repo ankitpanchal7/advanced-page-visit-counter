@@ -1,14 +1,14 @@
-=== Advanced Page Visit Counter – Advanced WordPress Visit Counter ===
+=== Advanced Page Visit Counter - Advanced WordPress Visit Counter ===
 Plugin Name: Advanced Page Visit Counter
 Plugin URI: https://www.pagevisitcounter.com/
 Author: Page Visit Counter
-Author URI: https://iamankitpanchal.com/
+Author URI: https://www.pagevisitcounter.com/
 Contributors: ankitmaru
-Stable tag: 6.1.6
+Stable tag: 6.4.2
 Tags: page counter,page visit, post counter, post visit, wordpress post view, wordpress page view, page visit graph, post visit graph,
 Requires at least: 3.9
 Requires PHP: 5.6
-Tested up to: 6.0
+Tested up to: 6.2
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -100,7 +100,7 @@ OR you can just install it with WordPress Admin Panel by going to Plugins / Add 
 
 == Frequently Asked Questions ==
 
-= Is this plugin works with latest WordPress 5.8.0 versions? =
+= Is this plugin works with latest WordPress 6.1.1 versions? =
 Yes, It is compatible with latest WordPress versions 4.1+
 
 = Is it compatible with other 3rd party plugins and themes? =
@@ -283,3 +283,27 @@ Automatic updates should work extra ordinary for you. As usual, however, We sugg
 
 = 6.1.6. - 15.06.2022 =
 * Improvements and security updates related to artID sql injection.
+
+= 6.1.7. - 16.06.2022 =
+* Improvements and php warning fixes.
+
+= 6.2.0. - 08.07.2022 =
+* Improvements and php warning fixes, Shortcodes labels fixes, Trial option added, Settings page improvements, Range option added for Pages and Posts.
+
+= 6.2.1. - 11.07.2022 =
+* wpdb global object issues with a few server fixed, php 8 minor support added, Freemius sdk version upgrade.
+
+= 6.3.0 - 25.07.2022 =
+* IP database related changes.
+
+= 6.3.1 - 06.10.2022 =
+* Improvements and fixes.
+
+= 6.4.0 - 23.12.2022 =
+* PHP 8 compatibility fixes and improvements and fixes.
+
+= 6.4.1 - 23.02.2023 =
+* Fixes and improvements and fixes.
+
+= 6.4.2 - 23.03.2023 =
+* Fixes and improvements and fixes and freemius sdk updated.

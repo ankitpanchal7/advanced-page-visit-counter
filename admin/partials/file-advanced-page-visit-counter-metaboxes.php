@@ -19,6 +19,10 @@ function apvc_advanced_metaboxes() {
 
 function get_alltimes_data_ind( $article_id ) {
 	global $wpdb;
+    
+    if( empty( $article_id ) ){
+        return 0;
+    }
 
 	$tbl_history = $wpdb->prefix . "avc_page_visit_history";
 
@@ -32,6 +36,10 @@ function get_alltimes_data_ind( $article_id ) {
 function get_todays_data_ind( $article_id ) {
 	global $wpdb;
 
+    if( empty( $article_id ) ){
+        return 0;
+    }
+
 	$tbl_history = $wpdb->prefix . "avc_page_visit_history";
 
 	$today = current_time( 'mysql' );
@@ -43,6 +51,10 @@ function get_todays_data_ind( $article_id ) {
 
 function get_weekly_data_ind( $article_id ) {
 	global $wpdb;
+
+    if( empty( $article_id ) ){
+        return 0;
+    }
 
 	$tbl_history = $wpdb->prefix . "avc_page_visit_history";
 
@@ -64,6 +76,10 @@ function get_weekly_data_ind( $article_id ) {
 function get_monthly_data_ind( $article_id ) {
 	global $wpdb;
 
+    if( empty( $article_id ) ){
+        return 0;
+    }
+
 	$tbl_history = $wpdb->prefix . "avc_page_visit_history";
 
 	$previous_Month0 = strtotime( "-0 months +1 day" );
@@ -80,9 +96,10 @@ function get_monthly_data_ind( $article_id ) {
 
 function apvc_advanced_metaboxes_callback() {
 
-	$active       = get_post_meta( sanitize_text_field($_GET['post']), "apvc_active_counter", TRUE );
-	$base_count   = get_post_meta( sanitize_text_field($_GET['post']), "count_start_from", TRUE );
-	$widget_label = get_post_meta( sanitize_text_field($_GET['post']), "widget_label", TRUE );
+    $post_id = ( isset( $_GET['post'] ) ) ? sanitize_text_field($_GET['post']) : 0;
+	$active       = get_post_meta( $post_id, "apvc_active_counter", TRUE );
+	$base_count   = get_post_meta( $post_id, "count_start_from", TRUE );
+	$widget_label = get_post_meta( $post_id, "widget_label", TRUE );
 	?>
     <style type="text/css">
         .apvc_meta_box_fields, .apvc_meta_box_fields p {
@@ -138,24 +155,24 @@ function apvc_advanced_metaboxes_callback() {
                 <tr>
                     <td>
                         <p><?php echo __( "Today" ); ?>
-                            <br/><strong><?php echo get_todays_data_ind( sanitize_text_field($_GET['post']) ); ?></strong>
+                            <br/><strong><?php echo get_todays_data_ind( $post_id ); ?></strong>
                         </p>
                     </td>
                     <td>
                         <p><?php echo __( "This Week" ); ?>
-                            <br/><strong><?php echo get_weekly_data_ind( sanitize_text_field($_GET['post']) ); ?></strong>
+                            <br/><strong><?php echo get_weekly_data_ind( $post_id ); ?></strong>
                         </p>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <p><?php echo __( "This Month" ); ?>
-                            <br/><strong><?php echo get_monthly_data_ind( sanitize_text_field($_GET['post']) ); ?></strong>
+                            <br/><strong><?php echo get_monthly_data_ind( $post_id ); ?></strong>
                         </p>
                     </td>
                     <td>
                         <p><?php echo __( "All Time" ); ?>
-                            <br/><strong><?php echo get_alltimes_data_ind( sanitize_text_field($_GET['post']) ); ?></strong>
+                            <br/><strong><?php echo get_alltimes_data_ind( $post_id ); ?></strong>
                         </p>
                     </td>
                 </tr>
