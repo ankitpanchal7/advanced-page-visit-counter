@@ -37,7 +37,7 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
      * @access   private
      */
     private  $version ;
-    private  $transients = array(
+    public  $transients = array(
         'apvc_yearly_data',
         'apvc_monthly_data',
         'apvc_weekly_data',
@@ -662,12 +662,14 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
 			  <div class="col-lg-12 order-lg-first">
 				<div class="data-list">
 				<?php 
+        $src = '';
         foreach ( $browserTrafficStatsList as $statsList ) {
+            $src = ( isset( $browserLogos[$statsList->browser_short_name] ) ? plugin_dir_url( __FILE__ ) . '/images/' . esc_html( $browserLogos[$statsList->browser_short_name] ) : plugin_dir_url( __FILE__ ) . '/images/' . esc_html( $browserLogos['default'] ) );
             ?>
 				  <div class="list-item row">
 					<div class="thumb col">
 					  <img class="rounded-circle img-xs" src="<?php 
-            echo  ( esc_html( $browserLogos[$statsList->browser_short_name] ) != '' ? plugin_dir_url( __FILE__ ) . '/images/' . esc_html( $browserLogos[$statsList->browser_short_name] ) : plugin_dir_url( __FILE__ ) . '/images/' . esc_html( $browserLogos['default'] ) ) ;
+            echo  $src ;
             ?>" alt="thumb"> </div>
 					<div class="browser col"><?php 
             echo  esc_html( $statsList->browser_full_name ) ;
@@ -850,7 +852,7 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
         _e( 'Most Visited Article', 'advanced-page-visit-counter' );
         ?></p>
 				  <h5 class="font-weight-bold"><?php 
-        echo  esc_html( $visits[0]->title ) ;
+        echo  ( isset( $visits[0]->title ) ? esc_html( $visits[0]->title ) : '' ) ;
         ?>
 				  <span class="text-muted"><a style="font-weight: normal; font-size: 14px !important;" href="<?php 
         echo  get_the_permalink( $visits[0]->article_id ) ;
@@ -1756,6 +1758,7 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
         $offset = ($pageno - 1) * $per_page;
         $apvcReports = json_decode( $this->get_the_reports( $offset, $per_page ) );
         $total_pages = ceil( $apvcReports->totalCount / $per_page );
+        $per_page_var = '';
         $dropDown = '';
         
         if ( $pageno == 0 ) {
@@ -2010,7 +2013,7 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
         $history_table = $wpdb->prefix . 'avc_page_visit_history';
         $art_id = sanitize_text_field( $_REQUEST['artID'] );
         
-        if ( $wpdb->query( "DELETE FROM {$history_table} WHERE article_id={$art_id}" ) ) {
+        if ( $wpdb->query( "DELETE FROM {$history_table} WHERE article_id= '" . esc_sql( $art_id ) . "'" ) ) {
             echo  wp_send_json_success( 'success' ) ;
         } else {
             echo  wp_send_json_error() ;
@@ -2024,7 +2027,7 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
         if ( !wp_verify_nonce( $_POST['security'], 'security_nonce' ) ) {
             die( 'Permission Denied.' );
         }
-        $art_id = sanitize_text_field( $_REQUEST['artID'] );
+        $art_id = esc_sql( sanitize_text_field( $_REQUEST['artID'] ) );
         $active = get_post_meta( $art_id, 'apvc_active_counter', true );
         $base_count = get_post_meta( $art_id, 'count_start_from', true );
         $widget_label = get_post_meta( $art_id, 'widget_label', true );
@@ -2103,6 +2106,7 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
     {
         global  $wpdb ;
         $tbl_history = APVC_DATA_TABLE;
+        $per_page_var = '';
         $dropDown = '';
         $g_checked = ( isset( $_REQUEST['u_g'] ) && $_REQUEST['u_g'] == 'on' ? 'checked' : '' );
         $rg_checked = ( isset( $_REQUEST['u_r'] ) && $_REQUEST['u_r'] == 'on' ? 'checked' : '' );
@@ -2402,6 +2406,7 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
             ?></span>
 							</a>
 						  </li>
+
 						  <li class="nav-item <?php 
             echo  ( $_GET['page'] == 'apvc-dashboard-page' && isset( $_GET['apvc_page'] ) && $_GET['apvc_page'] == 'reports' || isset( $_GET['apvc_page'] ) && $_GET['apvc_page'] == 'detailed-reports' ? 'menu-active' : '' ) ;
             ?>">
@@ -2469,6 +2474,32 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
 						  </li>
 						  <?php 
             ?>
+						<li class="nav-item">
+							<a href="#" target="_blank" class="nav-link">
+							  <i class="link-icon mdi mdi-lifebuoy"></i>
+							  <span class="menu-title"><?php 
+            _e( 'Support', 'advanced-page-visit-counter' );
+            ?></span>
+							</a>
+							<div class="submenu ">
+							  <ul class="submenu-item ">
+									<li class="nav-item ">
+									  <a href="https://pagevisitcounter.com/submit-ticket/" target="_blank" class="nav-link">
+										<?php 
+            _e( 'Submit a ticket', 'advanced-page-visit-counter' );
+            ?>
+										</a>
+									</li>
+									<li class="nav-item ">
+									  <a href="https://pagevisitcounter.com/feature-request/" target="_blank" class="nav-link">
+										<?php 
+            _e( 'Request a feature', 'advanced-page-visit-counter' );
+            ?>
+										</a>
+									</li>
+								</ul>
+							</div>
+						  </li>
 						</ul>
 					  </div>
 					</div>
@@ -2541,7 +2572,7 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
         global  $wpdb, $post ;
         $avc_config = (object) get_option( 'apvc_configurations', true );
         ?>
-		<div class="container page-body-wrapper avpc-settings-page">
+		<div class="container-fluid page-body-wrapper avpc-settings-page">
 			<div class="main-panel container"><br />
 			  <div class="content-wrapper">
 					<div class="col-lg-12 grid-margin stretch-card">
@@ -2607,7 +2638,7 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
         $avc_post_types = get_post_types();
         foreach ( $avc_post_types as $avc_pt ) {
             
-            if ( in_array( $avc_pt, $avc_config->apvc_post_types ) ) {
+            if ( isset( $avc_config->apvc_post_types ) && in_array( $avc_pt, $avc_config->apvc_post_types ) ) {
                 $selected = 'selected="selected"';
             } else {
                 $selected = '';
@@ -2619,7 +2650,6 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
 										  </select>
 										</div>
 									</div>
-
 									<div class="col-md-6">
 										<div class="form-group">
 										  <div class="card-body">
@@ -2631,7 +2661,7 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
         $avc_users = get_users();
         foreach ( $avc_users as $avc_usr ) {
             
-            if ( in_array( $avc_usr->ID, $avc_config->apvc_exclude_users ) ) {
+            if ( isset( $avc_config->apvc_exclude_users ) && in_array( $avc_usr->ID, $avc_config->apvc_exclude_users ) ) {
                 $selected = 'selected="selected"';
             } else {
                 $selected = '';
@@ -2644,10 +2674,6 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
 										  </div>
 									  </div>
 									</div>
-
-
-
-
 								</div>
 								<div class="row">
 									<div class="col-md-6">
@@ -2656,7 +2682,7 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
 											  <label><?php 
         _e( 'Exclude Post/Pages Counts', 'advanced-page-visit-counter' );
         ?></label>
-											<input name="apvc_exclude_counts" id="apvc_exclude_counts" value="<?php 
+											<input data-role="tagsinput" name="apvc_exclude_counts" id="apvc_exclude_counts" value="<?php 
         echo  ( !empty($avc_config->apvc_exclude_counts) ? implode( ',', $avc_config->apvc_exclude_counts ) : '' ) ;
         ?>" />
 
@@ -2677,7 +2703,6 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
 									</div>
 								</div>
 								<div class="row">
-
 									<div class="col-md-6">
 										<div class="form-group">
 										  <div class="card-body">
@@ -2696,8 +2721,6 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
 										  </div>
 									  </div>
 									</div>
-
-
 									<div class="col-md-6">
 										<div class="form-group">
 										  <div class="card-body">
@@ -2742,7 +2765,7 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
         ?></option>
 													<option value="above_the_content" 
 													<?php 
-        if ( $avc_config->apvc_show_conter_on_front_side[0] == 'above_the_content' ) {
+        if ( isset( $avc_config->apvc_show_conter_on_front_side[0] ) && $avc_config->apvc_show_conter_on_front_side[0] == 'above_the_content' ) {
             echo  'selected' ;
         }
         ?>
@@ -2751,7 +2774,7 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
         ?></option>
 													<option value="below_the_content" 
 													<?php 
-        if ( $avc_config->apvc_show_conter_on_front_side[0] == 'below_the_content' ) {
+        if ( isset( $avc_config->apvc_show_conter_on_front_side[0] ) && $avc_config->apvc_show_conter_on_front_side[0] == 'below_the_content' ) {
             echo  'selected' ;
         }
         ?>
@@ -2963,7 +2986,7 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
 									</div>
 								</div>
 							</div>
-							<div class="row tab-pane" id="widgetVTab" role="tabpanel" aria-labelledby="widget-v-tab" aria-selected="false">
+                            <div class="row tab-pane" id="widgetVTab" role="tabpanel" aria-labelledby="widget-v-tab" aria-selected="false">
 								<div class="row">
 									<div class="col-md-6">
 										<div class="form-group">
@@ -3035,28 +3058,39 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
 
 							<?php 
         ?>
+
 							<div class="row tab-pane" id="widTemplates" role="tabpanel" aria-labelledby="widget_templates-tab" aria-selected="false">
 								<div class="col-md-12">
 									<div class="form-group card-body">
 									  <label><?php 
         _e( 'Widget Templates', 'advanced-page-visit-counter' );
         ?></label>
-									  <select id="apvc_widget_template" name="apvc_widget_template" class="apvc-counter-icon" style="width:100%">
 									  <?php 
-        $shortcodes = json_decode( $this->apvc_get_shortcodes() );
+        $shortcodes = $this->apvc_get_shortcodes();
+        ?>
+									  <select id="apvc_widget_template" name="apvc_widget_template" class="apvc-counter-icon" style="width:100%">
+                                         <?php 
         echo  '<option value="">' . __( 'None', 'advanced-page-visit-counter' ) . '</option>' ;
-        foreach ( $shortcodes as $key => $value ) {
+        foreach ( $shortcodes as $value ) {
             
-            if ( in_array( $key, $avc_config->apvc_widget_template ) ) {
+            if ( isset( $avc_config->apvc_widget_template ) && in_array( $value['key'], $avc_config->apvc_widget_template ) ) {
                 $selected = 'selected="selected"';
             } else {
                 $selected = '';
             }
             
-            echo  '<option value="' . esc_html( $key ) . '" ' . $selected . '> ' . ucfirst( str_replace( '_', ' ', esc_html( $key ) ) ) . '</option>' ;
+            ?>
+                                            <option value="<?php 
+            echo  esc_html( $value['key'] ) ;
+            ?>" <?php 
+            echo  $selected ;
+            ?>><?php 
+            echo  $value['name'] ;
+            ?></option>;
+                                        <?php 
         }
         ?>
-									  </select>
+                                         </select>
 									  <br />
 									  <small class="text-muted"><?php 
         _e( '*Check the Shortcode Library page to check the demo of all the shortcodes.<Br />*All color properties ignored if any template selected.<Br />*More than 40 templates available in the Premium version of the plugin.', 'advanced-page-visit-counter' );
@@ -3064,7 +3098,6 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
 									</div>
 								</div>
 							</div>
-
 							<div class="row tab-pane" id="adSettings" role="tabpanel" aria-labelledby="advancedSettings-tab" aria-selected="false">
 								<div class="row">
 									<div class="col-md-6">
@@ -3074,7 +3107,7 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
         _e( 'Use Cache Plugin:', 'advanced-page-visit-counter' );
         ?></label>
 											<div class="icheck-square">
-											  <input tabindex="6" type="checkbox" name="cache_active" 
+											  <input tabindex="6" type="checkbox" name="cache_active"
 											  <?php 
         if ( isset( $avc_config->cache_active[0] ) && $avc_config->cache_active[0] == 'on' ) {
             echo  'checked' ;
@@ -3098,13 +3131,12 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
         _e( 'Show number in Short Version eg: 1000 -> 1k:', 'advanced-page-visit-counter' );
         ?></label>
 											<div class="icheck-square">
-											  <input tabindex="6" type="checkbox" name="numbers_in_k" 
+											  <input tabindex="6" type="checkbox" name="numbers_in_k"
 											  <?php 
         if ( isset( $avc_config->numbers_in_k[0] ) && $avc_config->numbers_in_k[0] == 'on' ) {
             echo  'checked' ;
         }
-        ?>
-												><label><?php 
+        ?>><label><?php 
         _e( 'Yes', 'advanced-page-visit-counter' );
         ?></label>
 											</div>
@@ -3119,7 +3151,7 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
         _e( 'Enable Anonymize IP', 'advanced-page-visit-counter' );
         ?></label>
 											<div class="icheck-square">
-											  <input tabindex="6" type="checkbox" name="ip_anonymize" 
+											  <input tabindex="6" type="checkbox" name="ip_anonymize"
 											  <?php 
         if ( isset( $avc_config->ip_anonymize[0] ) && $avc_config->ip_anonymize[0] == 'on' ) {
             echo  'checked' ;
@@ -3144,7 +3176,8 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
 							</div>
 
 						  </div><!-- card-body -->
-						  <div class="row" style="float: left;">
+
+						  <div class="row" >
 								<div class="col-md-12">
 									<div class="apvc-save-btns">
 										<button type="button" id="apvc_save_settings" class="btn btn-primary btn-fw"><i class="mdi mdi-heart-outline"></i><?php 
@@ -3159,6 +3192,7 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
 									</div>
 								</div>
 							</div>
+
 						</form>
 						</div> <!--- Simple Div End -->
 					  </div>
@@ -3538,10 +3572,10 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
         ?></label>
 												  <select id="apvc_widget_template" name="apvc_widget_template" class="apvc-counter-icon" style="width:100%">
 												  <?php 
-        $shortcodes = json_decode( $this->apvc_get_shortcodes() );
+        $shortcodes = $this->apvc_get_shortcodes();
         echo  '<option>' . __( 'None', 'advanced-page-visit-counter' ) . '</option>' ;
-        foreach ( $shortcodes as $key => $value ) {
-            echo  '<option value="' . esc_html( $key ) . '"> ' . ucfirst( str_replace( '_', ' ', esc_html( $key ) ) ) . '</option>' ;
+        foreach ( $shortcodes as $value ) {
+            echo  '<option value="' . esc_html( $value['key'] ) . '"> ' . esc_html( $value['name'] ) . '</option>' ;
         }
         ?>
 												  </select>
@@ -3586,25 +3620,25 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
                 $finalFormData[$rawFormData[0]][] = urldecode( sanitize_text_field( $rawFormData[1] ) );
             }
         }
-        $border_size = $finalFormData['border_size'][0];
-        $border_radius = $finalFormData['border_radius'][0];
-        $bg_color = $finalFormData['background_color'][0];
-        $font_size = $finalFormData['font_size'][0];
-        $font_style = $finalFormData['font_style'][0];
-        $font_color = $finalFormData['font_color'][0];
-        $border_style = $finalFormData['border_style'][0];
-        $border_color = $finalFormData['border_color'][0];
-        $counter_label = $finalFormData['counter_label'][0];
-        $today_counter_label = $finalFormData['today_counter_label'][0];
-        $global_counter_label = $finalFormData['global_counter_label'][0];
-        $padding = $finalFormData['padding'][0];
-        $width = $finalFormData['width'][0];
-        $shType = $finalFormData['shortcode_type'][0];
-        $shArticleID = $finalFormData['apvc_articles_list'][0];
-        $show_global_count = $finalFormData['show_global_count'][0];
-        $show_today_count = $finalFormData['show_today_count'][0];
-        $show_cr_pg_count = $finalFormData['show_cr_pg_count'][0];
-        $widget_template = $finalFormData['apvc_widget_template'][0];
+        $border_size = ( isset( $finalFormData['border_size'][0] ) ? $finalFormData['border_size'][0] : '' );
+        $border_radius = ( isset( $finalFormData['border_radius'][0] ) ? $finalFormData['border_radius'][0] : '' );
+        $bg_color = ( isset( $finalFormData['background_color'][0] ) ? $finalFormData['background_color'][0] : '' );
+        $font_size = ( isset( $finalFormData['font_size'][0] ) ? $finalFormData['font_size'][0] : '' );
+        $font_style = ( isset( $finalFormData['font_style'][0] ) ? $finalFormData['font_style'][0] : '' );
+        $font_color = ( isset( $finalFormData['font_color'][0] ) ? $finalFormData['font_color'][0] : '' );
+        $border_style = ( isset( $finalFormData['border_style'][0] ) ? $finalFormData['border_style'][0] : '' );
+        $border_color = ( isset( $finalFormData['border_color'][0] ) ? $finalFormData['border_color'][0] : '' );
+        $counter_label = ( isset( $finalFormData['counter_label'][0] ) ? $finalFormData['counter_label'][0] : '' );
+        $today_counter_label = ( isset( $finalFormData['today_counter_label'][0] ) ? $finalFormData['today_counter_label'][0] : '' );
+        $global_counter_label = ( isset( $finalFormData['global_counter_label'][0] ) ? $finalFormData['global_counter_label'][0] : '' );
+        $padding = ( isset( $finalFormData['padding'][0] ) ? $finalFormData['padding'][0] : '' );
+        $width = ( isset( $finalFormData['width'][0] ) ? $finalFormData['width'][0] : '' );
+        $shType = ( isset( $finalFormData['shortcode_type'][0] ) ? $finalFormData['shortcode_type'][0] : '' );
+        $shArticleID = ( isset( $finalFormData['apvc_articles_list'][0] ) ? $finalFormData['apvc_articles_list'][0] : '' );
+        $show_global_count = ( isset( $finalFormData['show_global_count'][0] ) ? $finalFormData['show_global_count'][0] : '' );
+        $show_today_count = ( isset( $finalFormData['show_today_count'][0] ) ? $finalFormData['show_today_count'][0] : '' );
+        $show_cr_pg_count = ( isset( $finalFormData['show_cr_pg_count'][0] ) ? $finalFormData['show_cr_pg_count'][0] : '' );
+        $widget_template = ( isset( $finalFormData['apvc_widget_template'][0] ) ? $finalFormData['apvc_widget_template'][0] : '' );
         if ( empty($shArticleID) ) {
             $shArticleID = 1;
         }
@@ -3689,7 +3723,7 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
     public function apvc_shortcode_library()
     {
         global  $wpdb ;
-        $shortcodes = json_decode( $this->apvc_get_shortcodes() );
+        $shortcodes = $this->apvc_get_shortcodes();
         ?>
 		<div class="container-fluid page-body-wrapper">
 			<div class="main-panel container">
@@ -3703,22 +3737,22 @@ class Advanced_Visit_Counter_Admin extends Advanced_Visit_Counter_Queries
         ?></b></h5>
 									<div class="row">
 									<?php 
-        foreach ( $shortcodes as $key => $value ) {
-            $addClass = ( isset( $value->class ) ? $value->class : '' );
+        foreach ( $shortcodes as $value ) {
+            $addClass = ( isset( $value['class'] ) ? $value['class'] : '' );
             ?>
 										<div class="col-lg-4 grid-margin">
 											<h4 class="card-title text-center">
 											<?php 
-            echo  str_replace( '_', ' ', $key ) ;
+            echo  $value['name'] ;
             ?>
 											</h4>
 											<style type="text/css">
 											<?php 
-            echo  esc_html( $value->css ) ;
+            echo  esc_html( $value['css'] ) ;
             ?>
 											</style>
 										<?php 
-            echo  ( $value->icon == 'yes' ? $this->apvc_get_html_with_icon( $key . ' ' . $addClass ) : $this->apvc_get_html_without_icon( $key . ' ' . $addClass ) ) ;
+            echo  ( $value['icon'] == 'yes' ? $this->apvc_get_html_with_icon( $value['key'] . ' ' . $addClass ) : $this->apvc_get_html_without_icon( $value['key'] . ' ' . $addClass ) ) ;
             ?>
 										</div>
 									<?php 

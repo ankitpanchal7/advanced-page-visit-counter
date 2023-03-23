@@ -16,9 +16,9 @@
  * Plugin Name:         Advanced Page Visit Counter
  * Plugin URI:        https://pagevisitcounter.com
  * Description:       This plugin will count the total visits of your website or ecommerce store.
- * Version:           6.1.6
- * Author:            Ankit Panchal
- * Author URI:        https://iamankitpanchal.com/
+ * Version:           6.4.2
+ * Author:            Page Visit Counter
+ * Author URI:        https://pagevisitcounter.com
  * License: GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       advanced-page-visit-counter
@@ -28,51 +28,55 @@
 if ( !defined( 'WPINC' ) ) {
     die;
 }
+global  $wpdb ;
 
 if ( function_exists( 'apvc_fs' ) ) {
     apvc_fs()->set_basename( false, __FILE__ );
 } else {
     // DO NOT REMOVE THIS IF, IT IS ESSENTIAL FOR THE `function_exists` CALL ABOVE TO PROPERLY WORK.
+    
     if ( !function_exists( 'apvc_fs' ) ) {
-        
-        if ( !function_exists( 'apvc_fs' ) ) {
-            // Create a helper function for easy SDK access.
-            function apvc_fs()
-            {
-                global  $apvc_fs ;
-                
-                if ( !isset( $apvc_fs ) ) {
-                    // Include Freemius SDK.
-                    include_once dirname( __FILE__ ) . '/includes/freemius/start.php';
-                    $apvc_fs = fs_dynamic_init( array(
-                        'id'             => '5937',
-                        'slug'           => 'advanced-page-visit-counter',
-                        'type'           => 'plugin',
-                        'public_key'     => 'pk_6ffe7478cb9ec6a6bfcf3496b571b',
-                        'is_premium'     => false,
-                        'premium_suffix' => 'Premium',
-                        'has_addons'     => false,
-                        'has_paid_plans' => true,
-                        'menu'           => array(
-                        'slug'       => 'apvc-dashboard-page',
-                        'first-path' => 'admin.php?page=apvc-dashboard-page',
-                        'support'    => false,
-                        'network'    => true,
-                    ),
-                        'is_live'        => true,
-                    ) );
-                }
-                
-                return $apvc_fs;
+        // Create a helper function for easy SDK access.
+        function apvc_fs()
+        {
+            global  $apvc_fs ;
+            
+            if ( !isset( $apvc_fs ) ) {
+                // Include Freemius SDK.
+                require_once dirname( __FILE__ ) . '/includes/freemius/start.php';
+                $apvc_fs = fs_dynamic_init( array(
+                    'id'              => '5937',
+                    'slug'            => 'advanced-page-visit-counter',
+                    'type'            => 'plugin',
+                    'public_key'      => 'pk_6ffe7478cb9ec6a6bfcf3496b571b',
+                    'is_premium'      => false,
+                    'premium_suffix'  => 'Premium',
+                    'has_addons'      => false,
+                    'has_paid_plans'  => true,
+                    'trial'           => array(
+                    'days'               => 3,
+                    'is_require_payment' => true,
+                ),
+                    'has_affiliation' => 'all',
+                    'menu'            => array(
+                    'slug'       => 'apvc-dashboard-page',
+                    'first-path' => 'admin.php?page=apvc-dashboard-page',
+                    'support'    => false,
+                    'network'    => true,
+                ),
+                    'is_live'         => true,
+                ) );
             }
             
-            // Init Freemius.
-            apvc_fs();
-            // Signal that SDK was initiated.
-            do_action( 'apvc_fs_loaded' );
+            return $apvc_fs;
         }
-    
+        
+        // Init Freemius.
+        apvc_fs();
+        // Signal that SDK was initiated.
+        do_action( 'apvc_fs_loaded' );
     }
+    
     // error_reporting( 0 );
     /**
      * Currently plugin version.
@@ -111,9 +115,7 @@ if ( function_exists( 'apvc_fs' ) ) {
     include plugin_dir_path( __FILE__ ) . 'includes/class-advanced-page-visit-counter-widget.php';
     include plugin_dir_path( __FILE__ ) . 'admin/partials/file-advanced-page-visit-counter-metaboxes.php';
     include plugin_dir_path( __FILE__ ) . 'includes/class-advanced-page-visit-counter-queries.php';
-
-    define( 'ADVANCED_PAGE_VISIT_COUNTER', '6.1.6' );
-
+    define( 'ADVANCED_PAGE_VISIT_COUNTER', '6.4.2' );
     define( 'APVC_DATA_TABLE', $wpdb->prefix . 'avc_page_visit_history' );
     define( 'APVC_USER_TABLE', $wpdb->prefix . 'apvc_user_locations' );
     define( 'APVC_SECONDS_PER_DAY', 86400 );

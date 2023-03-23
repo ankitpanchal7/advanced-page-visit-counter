@@ -21,6 +21,32 @@
  */
 class Advanced_Visit_Counter_Queries
 {
+    public  $transients = array(
+        'apvc_yearly_data',
+        'apvc_monthly_data',
+        'apvc_weekly_data',
+        'apvc_daily_data',
+        'apvc_browser_traffic_stats_data',
+        'apvc_browser_traffic_data',
+        'apvc_ref_traffic_data',
+        'apvc_os_data',
+        'apvc_orders_total',
+        'apvc_total_orders_data',
+        'apvc_total_products_sales',
+        'apvc_mvp_month_data',
+        'apvc_mvp_daily_data',
+        'apvc_fv_30_td',
+        'apvc_fv_30_past',
+        'apvc_fv_td',
+        'apvc_fv_past',
+        'apvc_get_visitors_mn_data',
+        'apvc_get_visitors_data',
+        'apvc_pvp_30_data',
+        'apvc_pvp_ip_30_data',
+        'apvc_pvp_daily_data',
+        'apvc_pvp_ip_daily_data',
+        'apvc_get_visit_stats'
+    ) ;
     public function apvc_number_format( $num )
     {
         $op = get_option( 'numbers_in_k' );
@@ -646,11 +672,11 @@ class Advanced_Visit_Counter_Queries
         global  $wpdb ;
         $table = APVC_DATA_TABLE;
         $where = '';
-        $d = sanitize_text_field( $_REQUEST['d'] );
-        $e = sanitize_text_field( $_REQUEST['e'] );
+        $d = ( isset( $_REQUEST['d'] ) ? sanitize_text_field( $_REQUEST['d'] ) : "" );
+        $e = ( isset( $_REQUEST['e'] ) ? sanitize_text_field( $_REQUEST['e'] ) : "" );
         
         if ( $d != 0 && !$this->apvc_is_date( $d ) ) {
-            $days_ago = date( 'Y-m-d', time() - $d * APVC_SECONDS_PER_DAY );
+            $days_ago = date( 'Y-m-d', time() - (int) $d * (int) APVC_SECONDS_PER_DAY );
             $where = " WHERE date >= '{$days_ago}' AND country = '{$country}' ";
         } else {
             
@@ -758,6 +784,12 @@ class Advanced_Visit_Counter_Queries
         }
         
         $formData = $_POST['formData'];
+        $default_label = $_POST['default_label'];
+        $todays_label = $_POST['todays_label'];
+        $global_label = $_POST['global_label'];
+        $range_posts = $_POST['range_posts'];
+        $range_ip_add = $_POST['range_ip_add'];
+        $ex_show_counter = $_POST['ex_show_counter'];
         $formDataStr = $formData;
         $formData = explode( "&", $formData );
         $finalFormData = [];
@@ -778,7 +810,43 @@ class Advanced_Visit_Counter_Queries
         foreach ( $formData as $key => $value ) {
             $rawFormData = explode( "=", $value );
             if ( isset( $rawFormData[0] ) ) {
-                $finalFormData[$rawFormData[0]][] = urldecode( trim( sanitize_text_field( $rawFormData[1] ) ) );
+                
+                if ( 'apvc_default_label' === $rawFormData[0] ) {
+                    $finalFormData[$rawFormData[0]][] = sanitize_text_field( $default_label );
+                } else {
+                    
+                    if ( 'apvc_todays_label' === $rawFormData[0] ) {
+                        $finalFormData[$rawFormData[0]][] = sanitize_text_field( $todays_label );
+                    } else {
+                        
+                        if ( 'apvc_global_label' === $rawFormData[0] ) {
+                            $finalFormData[$rawFormData[0]][] = sanitize_text_field( $global_label );
+                        } else {
+                            
+                            if ( 'apvc_exclude_counts' === $rawFormData[0] ) {
+                                $finalFormData[$rawFormData[0]][] = $range_posts;
+                            } else {
+                                
+                                if ( 'apvc_ip_address' === $rawFormData[0] ) {
+                                    $finalFormData[$rawFormData[0]][] = $range_ip_add;
+                                } else {
+                                    
+                                    if ( 'apvc_exclude_show_counter' === $rawFormData[0] ) {
+                                        $finalFormData[$rawFormData[0]][] = $ex_show_counter;
+                                    } else {
+                                        $finalFormData[$rawFormData[0]][] = sanitize_text_field( $rawFormData[1] );
+                                    }
+                                
+                                }
+                            
+                            }
+                        
+                        }
+                    
+                    }
+                
+                }
+            
             }
         }
         update_option( "apvc_configurations", $finalFormData );
@@ -911,10 +979,10 @@ class Advanced_Visit_Counter_Queries
     {
         global  $wpdb ;
         $tbl_history = APVC_DATA_TABLE;
-        $active_count = sanitize_text_field( $_POST["apvc_active_counter"] );
-        $reset_count = sanitize_text_field( $_POST["apvc_reset_cnt"] );
-        $start_count = sanitize_text_field( $_POST["count_start_from"] );
-        $widget_label = sanitize_text_field( $_POST["widget_label"] );
+        $active_count = ( isset( $_POST["apvc_active_counter"] ) ? sanitize_text_field( $_POST["apvc_active_counter"] ) : "" );
+        $reset_count = ( isset( $_POST["apvc_reset_cnt"] ) ? sanitize_text_field( $_POST["apvc_reset_cnt"] ) : "" );
+        $start_count = ( isset( $_POST["count_start_from"] ) ? sanitize_text_field( $_POST["count_start_from"] ) : "" );
+        $widget_label = ( isset( $_POST["widget_label"] ) ? sanitize_text_field( $_POST["widget_label"] ) : "" );
         if ( empty($active_count) ) {
             $active_count = "Yes";
         }
@@ -960,44 +1028,74 @@ class Advanced_Visit_Counter_Queries
     public function apvc_get_shortcodes( $shortcode = '' )
     {
         $shortcodes = [];
+        $shortcodes['template_3']['name'] = __( 'Template 3', 'advanced-page-visit-counter' );
+        $shortcodes['template_3']['key'] = 'template_3';
         $shortcodes['template_3']['icon'] = 'yes';
         $shortcodes['template_3']['css'] = '.template_3{background:#1c8394;padding:15px;margin:15px;border-radius:50px;border:2px solid #1c8394;-webkit-box-shadow:3px 4px 12px -2px rgba(0,0,0,.68);-moz-box-shadow:3px 4px 12px -2px rgba(0,0,0,.68);box-shadow:3px 4px 12px -2px rgba(0,0,0,.68);font-family:calibri;font-size:13pt;text-align:center}.template_3>div{color:#fff;display:inline-block;margin:0 30px}.template_3>div>span{font-weight:700;margin-left:10px}.template_3 .icons{color:#fff;margin-right:5px;font-weight:700}@media (max-width:644px){.template_3>div{margin:0 10px}}@media (max-width:525px){.template_3>div{color:#fff;display:block;margin:0;padding:10px 0;border-bottom:1px solid #fff}.template_3>div:last-child{border-bottom:none}}';
+        $shortcodes['template_6']['name'] = __( 'Template 6', 'advanced-page-visit-counter' );
+        $shortcodes['template_6']['key'] = 'template_6';
         $shortcodes['template_6']['icon'] = 'yes';
         $shortcodes['template_6']['class'] = 'effect2';
         $shortcodes['template_6']['css'] = '.template_6{background:#764ba2;background:linear-gradient(90deg,#667eea 0,#764ba2 100%);padding:15px;margin:15px;border-radius:40px;border:2px solid #764ba2;font-family:calibri;font-size:13pt;text-align:center}.effect2{position:relative}.effect2:after{z-index:-1;position:absolute;content:"";bottom:15px;right:10px;left:auto;width:50%;top:50%;max-width:300px;background:#777;-webkit-box-shadow:0 15px 10px #777;-moz-box-shadow:0 15px 10px #777;box-shadow:0 15px 10px #777;-webkit-transform:rotate(4deg);-moz-transform:rotate(4deg);-o-transform:rotate(4deg);-ms-transform:rotate(4deg);transform:rotate(4deg)}.template_6>div{color:#fff;display:inline-block;margin:0 30px}.template_6>div>span{font-weight:700;margin-left:10px}.template_6 .icons{color:#fff;margin-right:5px;font-weight:700}@media (max-width:644px){.template_6>div{margin:0 10px}}@media (max-width:525px){.template_6>div{display:block;margin:0;padding:10px 0;border-bottom:1px solid #fcb8a1}.template_6>div:last-child{border-bottom:none}}';
+        $shortcodes['template_7']['name'] = __( 'Template 7', 'advanced-page-visit-counter' );
+        $shortcodes['template_7']['key'] = 'template_7';
         $shortcodes['template_7']['icon'] = 'yes';
         $shortcodes['template_7']['class'] = 'effect2';
         $shortcodes['template_7']['css'] = '.template_7{background:#dfa579;background:linear-gradient(90deg,#c79081 0,#dfa579 100%);padding:15px;margin:15px;border-radius:40px;border:2px solid #dfa579;font-family:calibri;font-size:13pt;text-align:center}.effect2{position:relative}.effect2:after,.effect2:before{z-index:-1;position:absolute;content:"";bottom:25px;left:10px;width:50%;top:35%;max-width:300px;background:#000;-webkit-box-shadow:0 35px 20px #000;-moz-box-shadow:0 35px 20px #000;box-shadow:0 35px 20px #000;-webkit-transform:rotate(-7deg);-moz-transform:rotate(-7deg);-o-transform:rotate(-7deg);-ms-transform:rotate(-7deg);transform:rotate(-7deg)}.effect2:after{-webkit-transform:rotate(7deg);-moz-transform:rotate(7deg);-o-transform:rotate(7deg);-ms-transform:rotate(7deg);transform:rotate(7deg);right:10px;left:auto}.template_7>div{color:#fff;display:inline-block;margin:0 30px}.template_7>div>span{font-weight:700;margin-left:10px}.template_7 .icons{color:#fff;margin-right:5px;font-weight:700}@media (max-width:644px){.template_7>div{margin:0 10px}}@media (max-width:525px){.template_7>div{display:block;margin:0;padding:10px 0;border-bottom:1px solid #fcb8a1}.template_7>div:last-child{border-bottom:none}}';
+        $shortcodes['template_8']['name'] = __( 'Template 8', 'advanced-page-visit-counter' );
+        $shortcodes['template_8']['key'] = 'template_8';
         $shortcodes['template_8']['icon'] = 'yes';
         $shortcodes['template_8']['class'] = 'effect2';
         $shortcodes['template_8']['css'] = '.template_8{background:#5fc3e4;background:linear-gradient(90deg,#e55d87 0,#5fc3e4 100%);padding:15px;margin:15px;border:2px solid #5fc3e4;font-family:calibri;font-size:13pt;text-align:center}.effect2{position:relative;-webkit-box-shadow:0 1px 4px rgba(0,0,0,.3),0 0 40px rgba(0,0,0,.1) inset;-moz-box-shadow:0 1px 4px rgba(0,0,0,.3),0 0 40px rgba(0,0,0,.1) inset;box-shadow:0 1px 4px rgba(0,0,0,.3),0 0 40px rgba(0,0,0,.1) inset}.effect2:after,.effect2:before{content:"";position:absolute;z-index:-1;-webkit-box-shadow:0 0 20px rgba(0,0,0,.8);-moz-box-shadow:0 0 20px rgba(0,0,0,.8);box-shadow:0 0 20px rgba(0,0,0,.8);top:0;bottom:0;left:10px;right:10px;-moz-border-radius:100px/10px;border-radius:100px/10px}.effect2:after{right:10px;left:auto;-webkit-transform:skew(8deg) rotate(3deg);-moz-transform:skew(8deg) rotate(3deg);-ms-transform:skew(8deg) rotate(3deg);-o-transform:skew(8deg) rotate(3deg);transform:skew(8deg) rotate(3deg)}.template_8>div{color:#fff;display:inline-block;margin:0 30px}.template_8>div>span{font-weight:700;margin-left:10px}.template_8 .icons{color:#fff;margin-right:5px;font-weight:700}@media (max-width:644px){.template_8>div{margin:0 10px}}@media (max-width:525px){.template_8>div{display:block;margin:0;padding:10px 0;border-bottom:1px solid #fff}.template_8>div:last-child{border-bottom:none}}';
+        $shortcodes['template_11']['name'] = __( 'Template 11', 'advanced-page-visit-counter' );
+        $shortcodes['template_11']['key'] = 'template_11';
         $shortcodes['template_11']['icon'] = 'yes';
         $shortcodes['template_11']['css'] = '.template_11{background:#2980b9;background:linear-gradient(225deg,#2980b9 0,#6dd5fa 50%,#fff 100%);padding:15px;margin:15px;border-radius:40px;border:2px solid #2980b9;font-family:calibri;font-size:13pt;text-align:center}.template_11>div{color:#1a1a1a;display:inline-block;margin:0 30px}.template_11>div>span{font-weight:700;margin-left:10px}.template_11 .icons{color:#1a1a1a;margin-right:5px;font-weight:700}@media (max-width:644px){.template_11>div{margin:0 10px}}@media (max-width:525px){.template_11>div{display:block;margin:0;padding:10px 0;border-bottom:1px solid #2980b9}.template_11>div:last-child{border-bottom:none}}';
+        $shortcodes['template_22']['name'] = __( 'Template 22', 'advanced-page-visit-counter' );
+        $shortcodes['template_22']['key'] = 'template_22';
         $shortcodes['template_22']['icon'] = 'no';
         $shortcodes['template_22']['css'] = '.template_22{background:#355c7d;background:linear-gradient(90deg,#355c7d 0,#6c5b7b 50%,#c06c84 100%);padding:15px;margin:15px;font-family:calibri;font-size:13pt;text-align:center;-webkit-box-shadow:0 10px 14px 0 rgba(0,0,0,.1);-moz-box-shadow:0 10px 14px 0 rgba(0,0,0,.1);box-shadow:0 10px 14px 0 rgba(0,0,0,.1)}.template_22>div{color:#fff;display:inline-block;margin:0 30px}.template_22>div>span{font-weight:700;margin-left:10px}@media (max-width:644px){.template_22>div{margin:0 10px}}@media (max-width:525px){.template_22>div{display:block;margin:0;padding:10px 0;border-bottom:1px solid #c06c84}.template_22>div:last-child{border-bottom:none}}';
+        $shortcodes['template_23']['name'] = __( 'Template 23', 'advanced-page-visit-counter' );
+        $shortcodes['template_23']['key'] = 'template_23';
         $shortcodes['template_23']['icon'] = 'no';
         $shortcodes['template_23']['css'] = '.template_23{background:#fc5c7d;background:linear-gradient(90deg,#fc5c7d 0,#6c5b7b 50%,#6a82fb 100%);padding:15px;margin:15px;font-family:calibri;font-size:13pt;text-align:center;-webkit-box-shadow:0 10px 14px 0 rgba(0,0,0,.1);-moz-box-shadow:0 10px 14px 0 rgba(0,0,0,.1);box-shadow:0 10px 14px 0 rgba(0,0,0,.1)}.template_23>div{color:#fff;display:inline-block;margin:0 30px}.template_23>div>span{font-weight:700;margin-left:10px}@media (max-width:644px){.template_23>div{margin:0 10px}}@media (max-width:525px){.template_23>div{display:block;margin:0;padding:10px 0;border-bottom:1px solid #c06c84}.template_23>div:last-child{border-bottom:none}}';
+        $shortcodes['template_24']['name'] = __( 'Template 24', 'advanced-page-visit-counter' );
+        $shortcodes['template_24']['key'] = 'template_24';
         $shortcodes['template_24']['icon'] = 'no';
         $shortcodes['template_24']['css'] = '.template_24{background:#fffbd5;background:linear-gradient(90deg,#fffbd5 0,#b20a2c 50%);padding:15px;margin:15px;font-family:calibri;font-size:13pt;text-align:center;-webkit-box-shadow:0 10px 14px 0 rgba(0,0,0,.1);-moz-box-shadow:0 10px 14px 0 rgba(0,0,0,.1);box-shadow:0 10px 14px 0 rgba(0,0,0,.1)}.template_24>div{color:#fff;display:inline-block;margin:0 30px}.template_24>div>span{font-weight:700;margin-left:10px}@media (max-width:644px){.template_24>div{margin:0 10px}}@media (max-width:525px){.template_24>div{display:block;margin:0;padding:10px 0;border-bottom:1px solid #fffbd5}.template_24>div:last-child{border-bottom:none}}';
+        $shortcodes['template_25']['name'] = __( 'Template 25', 'advanced-page-visit-counter' );
+        $shortcodes['template_25']['key'] = 'template_25';
         $shortcodes['template_25']['icon'] = 'no';
         $shortcodes['template_25']['css'] = '.template_25{background:#302b63;background:linear-gradient(90deg,#0f0c29 0,#7365ff 50%,#24243e 100%);padding:15px;margin:15px;font-family:calibri;font-size:13pt;text-align:center;-webkit-box-shadow:0 10px 14px 0 rgba(0,0,0,.1);-moz-box-shadow:0 10px 14px 0 rgba(0,0,0,.1);box-shadow:0 10px 14px 0 rgba(0,0,0,.1)}.template_25>div{color:#fff;display:inline-block;margin:0 30px}.template_25>div>span{font-weight:700;margin-left:10px}@media (max-width:644px){.template_25>div{margin:0 10px}}@media (max-width:525px){.template_25>div{display:block;margin:0;padding:10px 0;border-bottom:1px solid #0f0c29}.template_25>div:last-child{border-bottom:none}}';
+        $shortcodes['template_26']['name'] = __( 'Template 26', 'advanced-page-visit-counter' );
+        $shortcodes['template_26']['key'] = 'template_26';
         $shortcodes['template_26']['icon'] = 'no';
         $shortcodes['template_26']['css'] = '.template_26{background:#d3cce3;background:linear-gradient(90deg,#d3cce3 0,#e9e4f0 50%,#d3cce3 100%);padding:15px;margin:15px;font-family:calibri;font-size:13pt;text-align:center;-webkit-box-shadow:0 10px 14px 0 rgba(0,0,0,.1);-moz-box-shadow:0 10px 14px 0 rgba(0,0,0,.1);box-shadow:0 10px 14px 0 rgba(0,0,0,.1)}.template_26>div{color:#6a6279;display:inline-block;margin:0 30px}.template_26>div>span{font-weight:700;margin-left:10px}@media (max-width:644px){.template_26>div{margin:0 10px}}@media (max-width:525px){.template_26>div{display:block;margin:0;padding:10px 0;border-bottom:1px solid #7f7a8a}.template_26>div:last-child{border-bottom:none}}';
+        $shortcodes['template_29']['name'] = __( 'Template 29', 'advanced-page-visit-counter' );
+        $shortcodes['template_29']['key'] = 'template_29';
         $shortcodes['template_29']['icon'] = 'no';
         $shortcodes['template_29']['css'] = '.template_29{background:#6d6027;background:linear-gradient(90deg,#6d6027 0,#d3cbb8 80%,#3c3b3f 100%);padding:15px;margin:15px;font-family:calibri;font-size:13pt;text-align:center;-webkit-box-shadow:0 10px 14px 0 rgba(0,0,0,.2);-moz-box-shadow:0 10px 14px 0 rgba(0,0,0,.2);box-shadow:0 10px 14px 0 rgba(0,0,0,.2)}.template_29>div{color:#fff;display:inline-block;margin:0 30px}.template_29>div>span{font-weight:700;margin-left:10px}@media (max-width:644px){.template_29>div{margin:0 10px}}@media (max-width:525px){.template_29>div{display:block;margin:0;padding:10px 0;border-bottom:1px solid #00f260}.template_29>div:last-child{border-bottom:none}}';
+        $shortcodes['template_31']['name'] = __( 'Template 31', 'advanced-page-visit-counter' );
+        $shortcodes['template_31']['key'] = 'template_31';
         $shortcodes['template_31']['icon'] = 'no';
         $shortcodes['template_31']['css'] = '.template_31{background:#3a1c71;background:linear-gradient(90deg,#3a1c71 0,#d76d77 25%,#ffaf7b 50%);padding:15px;margin:15px;font-family:calibri;font-size:13pt;text-align:center;-webkit-box-shadow:0 10px 14px 0 rgba(0,0,0,.2);-moz-box-shadow:0 10px 14px 0 rgba(0,0,0,.2);box-shadow:0 10px 14px 0 rgba(0,0,0,.2)}.template_31>div{color:#1a1a1a;display:inline-block;margin:0 30px}.template_31>div>span{font-weight:700;margin-left:10px}@media (max-width:644px){.template_31>div{margin:0 10px}}@media (max-width:525px){.template_31>div{display:block;margin:0;padding:10px 0;border-bottom:1px solid #fff}.template_31>div:last-child{border-bottom:none}}';
+        $shortcodes['template_34']['name'] = __( 'Template 34', 'advanced-page-visit-counter' );
+        $shortcodes['template_34']['key'] = 'template_34';
         $shortcodes['template_34']['icon'] = 'no';
         $shortcodes['template_34']['css'] = '.template_34{background:#f7971e;background:linear-gradient(90deg,#f7971e 0,#ffd200 50%,#f7971e 1%);padding:15px;margin:15px;font-family:calibri;font-size:13pt;text-align:center;-webkit-box-shadow:0 10px 14px 0 rgba(0,0,0,.2);-moz-box-shadow:0 10px 14px 0 rgba(0,0,0,.2);box-shadow:0 10px 14px 0 rgba(0,0,0,.2)}.template_34>div{color:#1a1a1a;display:inline-block;margin:0 30px}.template_34>div>span{font-weight:700;margin-left:10px}@media (max-width:644px){.template_34>div{margin:0 10px}}@media (max-width:525px){.template_34>div{display:block;margin:0;padding:10px 0;border-bottom:1px solid #fff}.template_34>div:last-child{border-bottom:none}}';
+        $shortcodes['template_39']['name'] = __( 'Template 39', 'advanced-page-visit-counter' );
+        $shortcodes['template_39']['key'] = 'template_39';
         $shortcodes['template_39']['icon'] = 'no';
         $shortcodes['template_39']['css'] = '.template_39{background:#000;background:linear-gradient(90deg,#000 0,#b3cc2c 50%);padding:15px;margin:15px;font-family:calibri;font-size:13pt;text-align:center;-webkit-box-shadow:0 10px 14px 0 rgba(0,0,0,.2);-moz-box-shadow:0 10px 14px 0 rgba(0,0,0,.2);box-shadow:0 10px 14px 0 rgba(0,0,0,.2)}.template_39>div{color:#fff;display:inline-block;margin:0 30px}.template_39>div>span{font-weight:700;margin-left:10px}@media (max-width:644px){.template_39>div{margin:0 10px}}@media (max-width:525px){.template_39>div{display:block;margin:0;padding:10px 0;border-bottom:1px solid #fff}.template_39>div:last-child{border-bottom:none}}';
+        $shortcodes['template_40']['name'] = __( 'Template 40', 'advanced-page-visit-counter' );
+        $shortcodes['template_40']['key'] = 'template_40';
         $shortcodes['template_40']['icon'] = 'no';
         $shortcodes['template_40']['css'] = '.template_40{background:#ba8b02;background:linear-gradient(90deg,#ba8b02 0,#ffd65d 80%,#ba8b02 100%);padding:15px;margin:15px;font-family:calibri;font-size:13pt;text-align:center;-webkit-box-shadow:0 10px 14px 0 rgba(0,0,0,.2);-moz-box-shadow:0 10px 14px 0 rgba(0,0,0,.2);box-shadow:0 10px 14px 0 rgba(0,0,0,.2)}.template_40>div{color:#1a1a1a;display:inline-block;margin:0 30px}.template_40>div>span{font-weight:700;margin-left:10px}@media (max-width:644px){.template_40>div{margin:0 10px}}@media (max-width:525px){.template_40>div{display:block;margin:0;padding:10px 0;border-bottom:1px solid #fff}.template_40>div:last-child{border-bottom:none}}';
         
         if ( !empty($shortcode) ) {
-            return wp_json_encode( $shortcodes[$shortcode] );
+            return $shortcodes[$shortcode];
         } else {
-            return wp_json_encode( $shortcodes );
+            return $shortcodes;
         }
     
     }
